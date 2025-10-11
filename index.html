@@ -67,7 +67,7 @@
         }
 
         .logo h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 900;
             background: linear-gradient(to right, var(--light-text), var(--win-color));
             -webkit-background-clip: text;
@@ -78,24 +78,39 @@
             color: var(--win-color);
         }
 
+        nav {
+            position: relative;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
         nav ul {
             display: flex;
             list-style: none;
         }
 
         nav ul li {
-            margin-right: 25px;
+            margin-right: 15px;
         }
 
         nav ul li a {
             color: var(--light-text);
             text-decoration: none;
             font-weight: 500;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: all 0.3s ease;
-            padding: 8px 15px;
+            padding: 8px 12px;
             border-radius: 8px;
             position: relative;
+            display: block;
         }
 
         nav ul li a::after {
@@ -123,6 +138,7 @@
             position: relative;
             color: var(--light-text);
             overflow: hidden;
+            padding: 2rem 0;
         }
 
         .hero::before {
@@ -141,13 +157,13 @@
             position: relative;
             z-index: 1;
             color: var(--light-text);
-            width: 70%;
-            text-align: right;
-            padding-top: 50px;
+            width: 100%;
+            text-align: center;
+            padding-top: 20px;
         }
 
         .hero-content h2 {
-            font-size: 3.8rem;
+            font-size: 2.5rem;
             margin-bottom: 1.5rem;
             line-height: 1.2;
             font-weight: 900;
@@ -158,60 +174,68 @@
         }
 
         .hero-content p {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             margin-bottom: 2.5rem;
             opacity: 0.9;
         }
 
         .stats {
             display: flex;
-            gap: 30px;
+            gap: 15px;
             margin-bottom: 2rem;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .stat-item {
             background: rgba(255, 123, 0, 0.1);
-            padding: 15px 25px;
+            padding: 12px 18px;
             border-radius: 10px;
             border: 1px solid var(--win-color);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            flex: 1;
+            min-width: 150px;
+            max-width: 200px;
         }
 
         .stat-item i {
             color: var(--win-color);
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
         .stat-item .number {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: var(--win-color);
         }
 
         .stat-item .label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: var(--light-text);
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
             background-color: var(--win-color);
             color: white;
-            padding: 15px 35px;
+            padding: 12px 25px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 700;
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1rem;
             box-shadow: 0 5px 20px rgba(255, 123, 0, 0.4);
             margin: 5px;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
         }
 
         .btn:hover {
@@ -238,9 +262,17 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
         }
 
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            width: 100%;
+        }
+
         /* Section General Styles */
         .section {
-            padding: 8rem 0;
+            padding: 5rem 0;
             background-color: var(--secondary-bg);
             border-top: 1px solid var(--border-color);
         }
@@ -251,15 +283,15 @@
 
         .section-title {
             text-align: center;
-            margin-bottom: 4rem;
+            margin-bottom: 3rem;
         }
 
         .section-title h2 {
-            font-size: 3rem;
+            font-size: 2.2rem;
             color: var(--win-color);
             position: relative;
             display: inline-block;
-            padding-bottom: 20px;
+            padding-bottom: 15px;
             font-weight: 900;
         }
 
@@ -269,7 +301,7 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
+            width: 80px;
             height: 4px;
             background-color: var(--light-text);
             border-radius: 2px;
@@ -278,14 +310,14 @@
         /* Features Section */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
         }
 
         .feature-card {
             background-color: var(--primary-bg);
             border-radius: 15px;
-            padding: 2.5rem;
+            padding: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             transition: all 0.4s ease;
             text-align: center;
@@ -293,40 +325,40 @@
         }
 
         .feature-card:hover {
-            transform: translateY(-15px) scale(1.02);
+            transform: translateY(-10px) scale(1.02);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
             border-color: var(--win-color);
         }
 
         .feature-icon {
-            font-size: 3.5rem;
+            font-size: 3rem;
             color: var(--win-color);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .feature-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 1.2rem;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
             color: var(--light-text);
             font-weight: 700;
         }
 
         .feature-card p {
             color: var(--dark-text);
-            font-size: 1.05rem;
+            font-size: 1rem;
         }
 
         /* Pricing Section */
         .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
         }
 
         .pricing-card {
             background-color: var(--primary-bg);
             border-radius: 15px;
-            padding: 3rem;
+            padding: 2rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             text-align: center;
             transition: all 0.4s ease;
@@ -338,52 +370,52 @@
         }
 
         .pricing-card:hover {
-            transform: translateY(-10px) scale(1.01);
+            transform: translateY(-8px) scale(1.01);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
         }
 
         .pricing-card.popular, .pricing-card.highly-rated {
             border-color: var(--win-color);
             position: relative;
-            transform: scale(1.03);
+            transform: scale(1.02);
         }
 
         .popular-badge, .rated-badge {
             position: absolute;
-            top: -20px;
-            right: 20px;
+            top: -15px;
+            right: 15px;
             background-color: var(--win-color);
             color: var(--primary-bg);
-            padding: 8px 20px;
+            padding: 6px 15px;
             border-radius: 50px;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: bold;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         
         .highly-rated-badge {
-            top: -20px;
-            left: 20px;
+            top: -15px;
+            left: 15px;
             background-color: var(--win-color);
             color: white;
         }
 
         .pricing-card h3 {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             color: var(--win-color);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             font-weight: 700;
         }
 
         .price {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: bold;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             color: var(--light-text);
         }
 
         .price span {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: var(--dark-text);
         }
 
@@ -405,18 +437,18 @@
 
         .pricing-features {
             list-style: none;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             text-align: right;
         }
 
         .pricing-features li {
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px dashed var(--border-color);
             color: var(--dark-text);
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         
         .pricing-features li:last-child {
@@ -425,7 +457,7 @@
 
         .pricing-features li i {
             color: var(--success);
-            font-size: 1.2rem;
+            font-size: 1rem;
         }
 
         .pricing-card .btn {
@@ -436,41 +468,41 @@
         /* About Section */
         .about-content {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+            grid-template-columns: 1fr;
+            gap: 3rem;
             align-items: center;
         }
 
         .about-text {
-            text-align: right;
+            text-align: center;
         }
 
         .about-text h2 {
-            font-size: 2.8rem;
+            font-size: 2.2rem;
             color: var(--win-color);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             font-weight: 900;
         }
 
         .about-text p {
             margin-bottom: 1.5rem;
-            font-size: 1.15rem;
-            line-height: 1.8;
+            font-size: 1.05rem;
+            line-height: 1.7;
             color: var(--dark-text);
         }
 
         .about-image {
             background-color: var(--secondary-bg);
-            min-height: 350px;
+            min-height: 250px;
             border-radius: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: var(--light-text);
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             text-align: center;
-            padding: 2rem;
+            padding: 1.5rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             border: 1px solid var(--border-color);
             background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
@@ -498,7 +530,7 @@
         }
 
         .about-image p {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--light-text);
             position: relative;
             z-index: 1;
@@ -507,22 +539,22 @@
         /* Trading Section */
         .trading-section {
             background-color: var(--primary-bg);
-            padding: 6rem 0;
+            padding: 5rem 0;
             text-align: center;
             border-top: 1px solid var(--border-color);
         }
         
         .trading-section h2 {
-            font-size: 2.8rem;
-            margin-bottom: 2rem;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
             color: var(--win-color);
             font-weight: 900;
         }
         
         .trading-section p {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             max-width: 900px;
-            margin: 0 auto 2.5rem;
+            margin: 0 auto 2rem;
             opacity: 0.8;
             color: var(--dark-text);
         }
@@ -530,20 +562,20 @@
         .trading-platforms {
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 20px;
             flex-wrap: wrap;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
         }
         
         .platform-logo {
-            width: 120px;
-            height: 60px;
+            width: 100px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            padding: 15px;
+            padding: 12px;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
         }
@@ -566,21 +598,21 @@
 
         /* Testimonials Section */
         .testimonials {
-            padding: 6rem 0;
+            padding: 5rem 0;
             background-color: var(--secondary-bg);
             text-align: center;
         }
         
         .testimonials-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
         }
         
         .testimonial-card {
             background-color: var(--primary-bg);
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 15px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             text-align: right;
@@ -589,7 +621,7 @@
         }
         
         .testimonial-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-8px);
             border-color: var(--win-color);
         }
         
@@ -597,18 +629,18 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
         
         .user-info {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
         
         .user-avatar {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--win-color);
@@ -616,37 +648,38 @@
         
         .user-name {
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--light-text);
         }
         
         .user-location {
             color: var(--dark-text);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         
         .rating {
             color: var(--gold);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         .testimonial-text {
             font-style: italic;
             color: var(--dark-text);
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
         }
         
         .testimonial-date {
             color: var(--dark-text);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-align: left;
         }
 
         /* Gaza Support Section */
         .gaza-support {
             background-color: var(--primary-bg);
-            padding: 8rem 0;
+            padding: 5rem 0;
             text-align: center;
             border-top: 1px solid var(--border-color);
         }
@@ -657,27 +690,27 @@
 
         .gaza-content {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+            grid-template-columns: 1fr;
+            gap: 3rem;
             align-items: center;
-            margin-top: 3rem;
+            margin-top: 2.5rem;
         }
 
         .gaza-text {
-            text-align: right;
+            text-align: center;
         }
 
         .gaza-text h3 {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             color: var(--light-text);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             font-weight: 700;
         }
 
         .gaza-text p {
-            font-size: 1.15rem;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
             color: var(--dark-text);
         }
 
@@ -696,24 +729,28 @@
 
         .support-actions {
             display: flex;
-            justify-content: flex-end;
-            gap: 20px;
-            margin-top: 2.5rem;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            margin-top: 2rem;
         }
 
         .support-btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
             background-color: var(--win-color);
             color: white;
-            padding: 15px 35px;
+            padding: 12px 25px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 700;
             transition: all 0.3s ease;
-            font-size: 1.1rem;
+            font-size: 1rem;
             box-shadow: 0 5px 20px rgba(255, 123, 0, 0.4);
+            width: 100%;
+            max-width: 300px;
         }
 
         .support-btn:hover {
@@ -738,34 +775,34 @@
         .charity-section {
             background-color: var(--secondary-bg);
             color: var(--light-text);
-            padding: 6rem 0;
+            padding: 5rem 0;
             text-align: center;
             border-top: 1px solid var(--border-color);
         }
         
         .charity-section h2 {
-            font-size: 2.8rem;
-            margin-bottom: 2rem;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
             color: var(--win-color);
             font-weight: 900;
         }
         
         .charity-section p {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             max-width: 900px;
-            margin: 0 auto 2.5rem;
+            margin: 0 auto 2rem;
             opacity: 0.8;
             color: var(--dark-text);
         }
         
         .charity-quote {
             font-style: italic;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             background-color: rgba(255, 123, 0, 0.1);
-            padding: 2.5rem;
+            padding: 2rem;
             border-radius: 15px;
             max-width: 900px;
-            margin: 3rem auto;
+            margin: 2.5rem auto;
             border-right: 5px solid var(--win-color);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             color: var(--light-text);
@@ -775,22 +812,22 @@
         footer {
             background-color: var(--primary-bg);
             color: var(--dark-text);
-            padding: 4rem 0 2rem;
+            padding: 3rem 0 1.5rem;
             border-top: 1px solid var(--border-color);
         }
 
         .footer-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2.5rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .footer-column h3 {
-            font-size: 1.8rem;
-            margin-bottom: 1.8rem;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
             position: relative;
-            padding-bottom: 12px;
+            padding-bottom: 10px;
             color: var(--light-text);
             font-weight: 700;
         }
@@ -800,16 +837,16 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 60px;
+            width: 50px;
             height: 3px;
             background-color: var(--win-color);
             border-radius: 2px;
         }
 
         .footer-column p {
-            font-size: 1.05rem;
-            line-height: 1.7;
-            margin-bottom: 20px;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
         }
 
         .footer-column ul {
@@ -817,13 +854,13 @@
         }
 
         .footer-column ul li {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .footer-column ul li a {
             color: var(--dark-text);
             text-decoration: none;
-            font-size: 1.05rem;
+            font-size: 1rem;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
@@ -837,20 +874,21 @@
 
         .social-links {
             display: flex;
-            gap: 18px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 15px;
+            justify-content: center;
         }
 
         .social-links a {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             background-color: rgba(255, 255, 255, 0.08);
             border-radius: 50%;
             color: var(--light-text);
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             transition: all 0.3s ease;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
@@ -863,39 +901,129 @@
 
         .copyright {
             text-align: center;
-            padding-top: 2.5rem;
+            padding-top: 2rem;
             border-top: 1px solid var(--border-color);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             opacity: 0.7;
         }
 
         /* Responsive Styles */
         @media (max-width: 992px) {
-            .hero-content {
-                width: 90%;
-                font-size: 0.9rem;
-            }
-
             .hero-content h2 {
-                font-size: 2.8rem;
+                font-size: 2.2rem;
             }
 
             .hero-content p {
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
 
-            .about-content, .gaza-content {
+            .section-title h2 {
+                font-size: 2rem;
+            }
+
+            .about-text h2, .gaza-text h3 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .logo {
+                margin-bottom: 0;
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                background-color: var(--secondary-bg);
+                width: 100%;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                border-radius: 0 0 10px 10px;
+                z-index: 1000;
+            }
+
+            nav ul.show {
+                display: flex;
+            }
+
+            nav ul li {
+                margin: 0 0 10px 0;
+                width: 100%;
+            }
+
+            nav ul li a {
+                display: block;
+                padding: 12px 15px;
+                border-radius: 8px;
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+
+            .hero {
+                min-height: auto;
+                padding: 3rem 0;
+            }
+
+            .hero-content h2 {
+                font-size: 1.8rem;
+            }
+
+            .stats {
+                gap: 10px;
+            }
+
+            .stat-item {
+                min-width: 120px;
+                padding: 10px 12px;
+            }
+
+            .stat-item .number {
+                font-size: 1.3rem;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+
+            .section {
+                padding: 3rem 0;
+            }
+
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+
+            .features-grid, .pricing-grid {
                 grid-template-columns: 1fr;
             }
 
-            .about-image, .gaza-image {
-                order: -1;
-                height: 300px;
-                margin-bottom: 2rem;
+            .pricing-card {
+                padding: 1.5rem;
             }
 
-            .support-actions {
-                justify-content: center;
+            .about-image, .gaza-image {
+                height: 200px;
+            }
+
+            .trading-section h2, .charity-section h2 {
+                font-size: 1.8rem;
+            }
+
+            .charity-quote {
+                font-size: 1.1rem;
+                padding: 1.5rem;
             }
 
             .footer-content {
@@ -909,57 +1037,71 @@
             }
         }
 
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .logo {
-                margin-bottom: 1.5rem;
-            }
-
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            nav ul li {
-                margin: 0 10px 10px;
-            }
-
-            .hero-content {
-                width: 100%;
-                text-align: center;
+        @media (max-width: 480px) {
+            .logo h1 {
+                font-size: 1.5rem;
             }
 
             .hero-content h2 {
-                font-size: 2.2rem;
+                font-size: 1.6rem;
             }
 
-            .btn {
-                padding: 12px 25px;
-                font-size: 1rem;
+            .hero-content p {
+                font-size: 0.95rem;
+            }
+
+            .stat-item {
+                min-width: 100px;
+                padding: 8px 10px;
+            }
+
+            .stat-item .number {
+                font-size: 1.2rem;
+            }
+
+            .stat-item .label {
+                font-size: 0.75rem;
             }
 
             .section-title h2 {
+                font-size: 1.6rem;
+            }
+
+            .feature-card, .pricing-card, .testimonial-card {
+                padding: 1.2rem;
+            }
+
+            .feature-icon {
                 font-size: 2.5rem;
             }
 
-            .features-grid, .pricing-grid {
-                grid-template-columns: 1fr;
+            .feature-card h3 {
+                font-size: 1.3rem;
             }
 
-            .pricing-card {
-                padding: 2.5rem;
+            .pricing-card h3 {
+                font-size: 1.5rem;
             }
-            
-            .gaza-text, .about-text {
-                text-align: center;
+
+            .price {
+                font-size: 2rem;
             }
-            
-            .stats {
-                justify-content: center;
+
+            .about-text h2, .gaza-text h3 {
+                font-size: 1.5rem;
+            }
+
+            .trading-section h2, .charity-section h2 {
+                font-size: 1.5rem;
+            }
+
+            .charity-quote {
+                font-size: 1rem;
+                padding: 1.2rem;
+            }
+
+            .footer-column h3 {
+                font-size: 1.3rem;
             }
         }
     </style>
@@ -971,7 +1113,10 @@
                 <h1>Keda<span>Win</span></h1>
             </div>
             <nav>
-                <ul>
+                <button class="nav-toggle" id="navToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul id="navMenu">
                     <li><a href="#home">الرئيسية</a></li>
                     <li><a href="#features">المميزات</a></li>
                     <li><a href="#pricing">باقات الرهانات</a></li>
@@ -1011,12 +1156,12 @@
                         <i class="fas fa-hand-holding-usd"></i>
                         <div>
                             <div class="number">7.5M+</div>
-                            <div class="label">جنيه أرباح يوميا</div>
+                            <div class="label">جنيه أرباح</div>
                         </div>
                     </div>
                 </div>
                 
-                <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: flex-end;">
+                <div class="btn-container">
                     <a href="#pricing" class="btn"><i class="fas fa-play-circle"></i> احصل على السكربت الآن</a>
                     <a href="https://t.me/Keda_Win_Bot" class="btn btn-telegram" target="_blank"><i class="fab fa-telegram"></i> بوت التيليجرام</a>
                     <a href="#trading" class="btn"><i class="fas fa-chart-bar"></i> استراتيجيات التداول</a>
@@ -1071,6 +1216,20 @@
                 <h2>باقات سكربتات الرهانات</h2>
             </div>
             <div class="pricing-grid">
+                <div class="pricing-card silver">
+                    <h3>الباقة المبتدئة</h3>
+                    <div class="price">500 جنيه <span>/1.5 ساعة</span></div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check-circle"></i> تنبؤات بدقة 80%</li>
+                        <li><i class="fas fa-check-circle"></i> تنبؤات غير محدودة</li>
+                        <li><i class="fas fa-check-circle"></i> الحد الأقصى للتنبؤ X5</li>
+                        <li><i class="fas fa-check-circle"></i> إشعارات قبل الجولة</li>
+                        <li><i class="fas fa-check-circle"></i> دعم فني عبر البوت</li>
+                        <li><i class="fas fa-check-circle"></i> خسارة 20 جيم فقط غير محددة</li>
+                    </ul>
+                    <a href="https://t.me/Keda_Win_Bot" class="btn" target="_blank"><i class="fas fa-arrow-alt-circle-right"></i> اشترك الآن</a>
+                    <a href="https://t.me/Keda_Win_Bot" class="btn" style="margin-top: 10px; background: #333;" target="_blank"><i class="fas fa-play"></i> ابدأ المراهنات الآن</a>
+                </div>
                 <div class="pricing-card silver">
                     <h3>الباقة الأساسية</h3>
                     <div class="price">1000 جنيه <span>/3 ساعات</span></div>
@@ -1146,7 +1305,7 @@
             </div>
             <div class="pricing-grid">
                 <div class="pricing-card gold">
-                    <h3>رحلة الـ 10 مليون جنيه</h3>
+                    <h3>رحلة الـ 1 مليون جنيه</h3>
                     <div class="price">15,000 جنيه <span>/45 يوم</span></div>
                     <ul class="pricing-features">
                         <li><i class="fas fa-check-circle"></i> تنبؤات بدقة 100%</li>
@@ -1156,12 +1315,13 @@
                         <li><i class="fas fa-check-circle"></i> استراتيجيات مضمونة للوصول للهدف</li>
                         <li><i class="fas fa-check-circle"></i> تحليلات مخصصة يومية</li>
                         <li><i class="fas fa-check-circle"></i> إدارة محفظة متكاملة</li>
+                        <li><i class="fas fa-check-circle"></i> شامل سكربتات المراهنات والتداول</li>
                     </ul>
                     <a href="https://t.me/Keda_Win_Bot" class="btn" target="_blank"><i class="fas fa-arrow-alt-circle-right"></i> ابدأ رحلتك الآن</a>
                 </div>
                 <div class="pricing-card diamond highly-rated">
                     <div class="rated-badge highly-rated-badge">الحل الأمثل</div>
-                    <h3>رحلة الـ 50 مليون جنيه</h3>
+                    <h3>رحلة الـ 2 مليون جنيه</h3>
                     <div class="price">25,000 جنيه <span>/4 أشهر</span></div>
                     <ul class="pricing-features">
                         <li><i class="fas fa-check-circle"></i> تنبؤات بدقة 100%</li>
@@ -1172,6 +1332,7 @@
                         <li><i class="fas fa-check-circle"></i> تحليلات وتقارير يومية</li>
                         <li><i class="fas fa-check-circle"></i> إدارة محفظة احترافية</li>
                         <li><i class="fas fa-check-circle"></i> جلسات تدريبية أسبوعية</li>
+                        <li><i class="fas fa-check-circle"></i> شامل سكربتات المراهنات والتداول</li>
                     </ul>
                     <a href="https://t.me/Keda_Win_Bot" class="btn" target="_blank"><i class="fas fa-arrow-alt-circle-right"></i> ابدأ رحلتك الآن</a>
                 </div>
@@ -1184,7 +1345,7 @@
             <h2>استراتيجيات التداول المضمونة</h2>
             <p>نقدم لك استراتيجيات تداول مضمونة بنسبة 100% على منصات ExpertOption و Olymp Trade وغيرها</p>
             
-            <div class="pricing-grid" style="margin-top: 4rem;">
+            <div class="pricing-grid" style="margin-top: 3rem;">
                 <div class="pricing-card silver">
                     <h3>الباقة الأسبوعية</h3>
                     <div class="price">600 جنيه <span>/أسبوع</span></div>
@@ -1271,7 +1432,7 @@
                     <div class="testimonial-text">
                         "من أفضل السكربتات اللي جربتها في حياتي! من أول يوم وانا بربح بشكل مستمر، الحمد لله قدرت أجيب مبلغ محترم جداً في أسبوعين بس."
                     </div>
-                    <div class="testimonial-date">15 يونيو 2023</div>
+                    <div class="testimonial-date">15 يونيو 2025</div>
                 </div>
                 
                 <div class="testimonial-card">
@@ -1288,7 +1449,7 @@
                     <div class="testimonial-text">
                         "والله العظيم السكربت ده غير حياتي! كنت خسران كتير قبل ما أعرف KedaWin، دلوقتي بربح يومياً وبثقة كبيرة بسبب التنبؤات الدقيقة."
                     </div>
-                    <div class="testimonial-date">2 يوليو 2023</div>
+                    <div class="testimonial-date">2 يوليو 2025</div>
                 </div>
                 
                 <div class="testimonial-card">
@@ -1305,7 +1466,7 @@
                     <div class="testimonial-text">
                         "جربت كل السكربتات في السوق، لكن ده بصراحة الأفضل. الدقة في التنبؤات فوق الخيال، وفريق الدعم الفني متاح 24 ساعة يساعد في أي مشكلة."
                     </div>
-                    <div class="testimonial-date">28 مايو 2023</div>
+                    <div class="testimonial-date">28 مايو 2025</div>
                 </div>
                 
                 <div class="testimonial-card">
@@ -1322,7 +1483,7 @@
                     <div class="testimonial-text">
                         "بقالي 3 شهور باستخدم السكربت، والحمد لله أرباحي تضاعفت 10 مرات! الميزة الأهم إنه بيحدد الخسائر قبل ما تحصل، فبتحافظ على رأس مالك."
                     </div>
-                    <div class="testimonial-date">10 أغسطس 2023</div>
+                    <div class="testimonial-date">10 أغسطس 2025</div>
                 </div>
                 
                 <div class="testimonial-card">
@@ -1337,9 +1498,9 @@
                         <div class="rating">★★★★★</div>
                     </div>
                     <div class="testimonial-text">
-                        "اشتريت باقة الـ 10 مليون، والحمد لله في شهر واحد قدرت أجيب 4 مليون! الفريق بيساعدك خطوة بخطوة للوصول للهدف، والنتائج مضمونة 100%."
+                        "اشتريت باقة الـ 1 مليون، والحمد لله في شهر واحد قدرت أجيب 400 ألف! الفريق بيساعدك خطوة بخطوة للوصول للهدف، والنتائج مضمونة 100%."
                     </div>
-                    <div class="testimonial-date">5 يوليو 2023</div>
+                    <div class="testimonial-date">5 يوليو 2025</div>
                 </div>
                 
                 <div class="testimonial-card">
@@ -1356,7 +1517,7 @@
                     <div class="testimonial-text">
                         "جربت استراتيجيات التداول حقتهم، والله العظيم في أسبوع ربحت 300 دولار من 50 دولار! الدقة في الإشارات والتوقيتات شيء مش طبيعي."
                     </div>
-                    <div class="testimonial-date">20 يونيو 2023</div>
+                    <div class="testimonial-date">20 يونيو 2025</div>
                 </div>
             </div>
         </div>
@@ -1448,9 +1609,41 @@
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2023 KedaWin. جميع الحقوق محفوظة</p>
+                <p>&copy; 2025 KedaWin. جميع الحقوق محفوظة</p>
             </div>
         </div>
     </footer>
+
+    <script>
+        // Toggle mobile navigation menu
+        document.getElementById('navToggle').addEventListener('click', function() {
+            document.getElementById('navMenu').classList.toggle('show');
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('#navMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('navMenu').classList.remove('show');
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
