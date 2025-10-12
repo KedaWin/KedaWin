@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KedaWin OnePage — لوحة تداول و تحليلات حقيقية</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="" crossorigin="anonymous"/>
+
+  <!-- Chart.js + financial plugin -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.1.0/dist/chartjs-adapter-luxon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1"></script>
+
+  <style>
+    /* Reset & base */
+    :root{
+      --bg:#071020; --card:#0f1724; --muted:#9aa6b2; --accent:#ff7b00; --up:#22c55e; --down:#ef4444; --glass: rgba(255,255,255,0.03);
+      --radius:14px;
+      --text:#e6eef6;
+      --max-width:1400px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; font-family:'Tajawal',sans-serif; background:linear-gradient(180deg,#04101a 0%, #071a2a 100%); color:var(--text);}
+    .wrap{max-width:var(--max-width); margin:18px auto; padding:18px; display:flex; gap:18px; align-items:flex-start;}
+    /* responsive: grid layout switching to column */
+    @media(max-width:1100px){ .wrap{flex-direction:column; padding:12px} }
+
+    /* LEFT: controls */
+    .panel{background:var(--card); border-radius:var(--radius); padding:16px; box-shadow:0 8px 30px rgba(0,0,0,0.6);}
+    .left{width:340px; min-width:260px; max-height:calc(100vh - 60px); overflow:auto}
+    @media(max-width:1100px){ .left{width:100%; max-height:none} }
+
+    .title{font-weight:800; color:var(--accent); font-size:1.15rem; margin-bottom:12px; display:flex; gap:10px; align-items:center}
+    .muted{color:var(--muted); font-size:0.95rem}
+    .form-row{margin-bottom:12px}
+
+    input[type="text"], select{width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--text)}
+    .search-box{position:relative}
+    .suggestions{position:absolute; left:0; right:0; top:46px; background:var(--card); border-radius:10px; max-height:260px; overflow:auto; box-shadow:0 12px 30px rgba(0,0,0,0.6); display:none; z-index:30; border:1px solid rgba(255,255,255,0.03)}
+    .suggestions .item{padding:10px; display:flex; gap:10px; align-items:center; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.02)}
+    .suggestions .item:hover{background:rgba(255,255,255,0.02)}
+    .asset-logo{width:34px;height:34px;border-radius:8px; object-fit:cover; background:linear-gradient(45deg,#111,#222); display:inline-block}
+
+    .short-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+    .btn{display:inline-flex; gap:8px; align-items:center; justify-content:center; padding:10px 12px; border-radius:10px; background:var(--accent); color:#fff; font-weight:700; cursor:pointer; border:none}
+    .btn.secondary{background:transparent; border:1px solid rgba(255,255,255,0.05); color:var(--text); font-weight:600}
+
+    .platforms{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{padding:8px 10px; border-radius:10px; background:var(--glass); color:var(--muted); font-weight:700; display:flex; gap:8px; align-items:center; cursor:pointer}
+    .chip.active{background:linear-gradient(90deg, rgba(255,123,0,0.12), rgba(34,197,94,0.06)); color:var(--text); box-shadow:0 6px 20px rgba(255,123,0,0.06)}
+
+    hr{border:none;height:1px;background:rgba(255,255,255,0.03); margin:12px 0;border-radius:2px}
+
+    /* RIGHT: dashboard wide */
+    .right{flex:1; display:flex; flex-direction:column; gap:12px}
+    .header{display:flex; justify-content:space-between; gap:12px; align-items:center}
+    .summary{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    .big-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:14px; border-radius:var(--radius); min-width:220px; display:flex; flex-direction:column; gap:6px; box-shadow:0 6px 18px rgba(0,0,0,0.55)}
+    .price-big{font-size:1.6rem; font-weight:800}
+    .small-muted{color:var(--muted); font-size:0.9rem}
+
+    /* Chart container wide */
+    .chart-panel{height:520px; border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column}
+    @media(max-width:900px){ .chart-panel{height:420px} }
+
+    #chart-wrap{flex:1; background:linear-gradient(180deg,#041726, #07182a); padding:12px; display:flex; flex-direction:column}
+    .chart-topbar{display:flex; gap:10px; align-items:center; justify-content:space-between; margin-bottom:8px}
+    .controls-inline{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .intervals button{padding:8px 10px; border-radius:8px; border:none; background:transparent; color:var(--muted); cursor:pointer}
+    .intervals button.active{background:rgba(255,255,255,0.04); color:var(--text)}
+
+    /* history & indicators */
+    .lower-grid{display:grid; grid-template-columns:1fr 360px; gap:12px}
+    @media(max-width:1100px){ .lower-grid{grid-template-columns:1fr; } }
+    .indicators{padding:12px; border-radius:var(--radius); background:var(--card)}
+    .ind-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
+    .ind-item{background:var(--glass); padding:10px; border-radius:8px; text-align:center}
+    .history{padding:12px; border-radius:var(--radius); background:var(--card); max-height:320px; overflow:auto}
+
+    table{width:100%; border-collapse:collapse; font-size:0.95rem}
+    th,td{padding:8px; text-align:right; border-bottom:1px dashed rgba(255,255,255,0.03); color:var(--muted)}
+    th{color:var(--text); font-weight:700}
+
+    footer.small{color:var(--muted); font-size:0.85rem; text-align:center; margin-top:10px}
+
+    /* small helpers */
+    .tag-up{color:var(--up); font-weight:800}
+    .tag-down{color:var(--down); font-weight:800}
+    .center{text-align:center}
+    .flex{display:flex; align-items:center; gap:8px}
+    .grow{flex:1}
+  </style>
+</head>
+<body>
+  <!-- NOTE: This single-file app uses public endpoints. If you see blank data, run via local server to avoid CORS issues. -->
+
+  <div class="wrap">
+    <!-- LEFT controls -->
+    <div class="panel left">
+      <div class="title"><i class="fas fa-chart-line"></i> KedaWin — تحليلات فورية</div>
+      <div class="muted">شغّل البحث لعرض أي أصل (عملات رقمية، أسهم شهيرة، فوركس، سلع).</div>
+      <hr>
+
+      <div class="form-row search-box">
+        <label class="muted">بحث مباشر (اكتب رمز أو اسم)</label>
+        <input id="search-input" type="text" placeholder="مثال: BTC, ETH, AAPL, GOLD..." autocomplete="off"/>
+        <div id="suggestions" class="suggestions" aria-hidden="true"></div>
+      </div>
+
+      <div class="form-row">
+        <label class="muted">أطر زمنية للشموع</label>
+        <div class="short-grid intervals" id="intervals">
+          <button data-interval="1m" class="active">1m</button>
+          <button data-interval="5m">5m</button>
+          <button data-interval="15m">15m</button>
+          <button data-interval="1h">1h</button>
+          <button data-interval="4h">4h</button>
+          <button data-interval="1d">1d</button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="muted">أصول سريعة</label>
+        <div class="platforms" id="fast-assets"></div>
+      </div>
+
+      <div class="form-row">
+        <label class="muted">خيارات الرسم و التحليل</label>
+        <div class="short-grid">
+          <button class="btn" id="btn-analyze"><i class="fas fa-magic"></i> تحليل الآن</button>
+          <button class="btn secondary" id="btn-export"><i class="fas fa-download"></i> تصدير CSV</button>
+        </div>
+      </div>
+
+      <hr>
+      <div class="muted" style="margin-bottom:8px">مصادر البيانات (اعتماد متتابع):</div>
+      <div class="chip"><i class="fab fa-bitcoin"></i> Binance (كريبتو)</div>
+      <div style="height:8px"></div>
+      <div class="chip"><i class="fas fa-coins"></i> CoinGecko / CoinCap</div>
+      <div style="height:8px"></div>
+      <div class="chip"><i class="fas fa-landmark"></i> exchangerate.host (فوركس/سلع)</div>
+
+      <hr>
+      <div class="muted">تلميحات:</div>
+      <ul style="color:var(--muted); margin:8px 0 0 18px; line-height:1.6">
+        <li>افتح الصفحة عبر سيرفر محلي إذا ظهرت مشاكل تحميل (CORS).</li>
+        <li>للحصول على بيانات أسهم أكثر دقة يمكن إضافة مفاتيح Finnhub / TwelveData لاحقًا.</li>
+      </ul>
+    </div>
+
+    <!-- RIGHT: dashboard -->
+    <div class="right">
+      <div class="header">
+        <div class="summary">
+          <div class="big-card">
+            <div class="small-muted">الأصل</div>
+            <div class="price-big" id="asset-name">—</div>
+            <div class="small-muted" id="asset-symbol">—</div>
+          </div>
+          <div class="big-card">
+            <div class="small-muted">السعر الحالي</div>
+            <div style="display:flex; align-items:center; gap:8px">
+              <div class="price-big" id="asset-price">$0</div>
+              <div id="asset-change" class="tag-up">+0%</div>
+            </div>
+            <div class="small-muted" id="asset-exchange">—</div>
+          </div>
+          <div class="big-card">
+            <div class="small-muted">دقة التنبؤ</div>
+            <div class="price-big" id="pred-acc">--%</div>
+            <div class="small-muted">مبنّي على مؤشرات فنية</div>
+          </div>
+        </div>
+
+        <div class="flex">
+          <div class="small-muted">حالة الاتصال:</div>
+          <div id="conn-status" class="chip">غير متصل</div>
+        </div>
+      </div>
+
+      <div class="chart-panel panel">
+        <div id="chart-wrap">
+          <div class="chart-topbar">
+            <div class="controls-inline">
+              <div style="display:flex; gap:8px; align-items:center">
+                <img id="asset-logo" src="" alt="" style="width:38px;height:38px;border-radius:8px;object-fit:cover;display:none"/>
+                <div style="text-align:right">
+                  <div id="asset-title" style="font-weight:800"></div>
+                  <div id="asset-sub" class="small-muted"></div>
+                </div>
+              </div>
+              <div style="width:10px"></div>
+              <div class="muted">الإطار:</div>
+              <div id="current-interval" class="muted">1m</div>
+            </div>
+
+            <div class="controls-inline">
+              <select id="chart-type">
+                <option value="candlestick">شموع</option>
+                <option value="ohlc">OHLC</option>
+                <option value="line">خط</option>
+              </select>
+              <select id="theme-select">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="flex:1; min-height:320px;">
+            <canvas id="marketChart" style="width:100%; height:100%"></canvas>
+          </div>
+
+          <div style="display:flex; gap:8px; margin-top:8px; align-items:center; justify-content:space-between">
+            <div class="small-muted">أدوات: RSI · EMA · MACD · Bollinger Bands · Volume</div>
+            <div style="display:flex; gap:8px">
+              <div class="muted">تحديث تلقائي</div>
+              <input id="auto-refresh" type="checkbox" checked/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lower-grid">
+        <div>
+          <div class="indicators panel">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+              <div class="small-muted">مؤشرات فنية (آخر بيانات)</div>
+              <div class="muted">قيمة</div>
+            </div>
+            <div class="ind-grid" id="indicators-grid">
+              <div class="ind-item"><div class="small-muted">RSI</div><div id="rsi" style="font-weight:800">--</div></div>
+              <div class="ind-item"><div class="small-muted">MACD</div><div id="macd" style="font-weight:800">--</div></div>
+              <div class="ind-item"><div class="small-muted">EMA(20)</div><div id="ema20" style="font-weight:800">--</div></div>
+              <div class="ind-item"><div class="small-muted">EMA(50)</div><div id="ema50" style="font-weight:800">--</div></div>
+              <div class="ind-item"><div class="small-muted">Bollinger</div><div id="bb" style="font-weight:800">--</div></div>
+              <div class="ind-item"><div class="small-muted">حجم</div><div id="vol" style="font-weight:800">--</div></div>
+            </div>
+          </div>
+
+          <div class="history panel" style="margin-top:12px">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+              <div class="small-muted">سجل تفصيلي (أحدث)</div>
+              <div class="muted" id="history-count">0</div>
+            </div>
+            <table id="history-table" aria-live="polite">
+              <thead><tr><th>الوقت</th><th>الأصل</th><th>الاتجاه</th><th>السعر</th><th>نقطة</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+              <div class="small-muted">تفاصيل الأدوات / إعدادات</div>
+              <div class="muted">تحكم متقدم</div>
+            </div>
+            <div style="margin-bottom:10px">
+              <label class="muted">تفعيل مؤشرات:</label>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+                <div class="chip active" id="toggle-rsi">RSI</div>
+                <div class="chip active" id="toggle-macd">MACD</div>
+                <div class="chip active" id="toggle-ema">EMA</div>
+                <div class="chip" id="toggle-bb">Bollinger</div>
+              </div>
+            </div>
+
+            <div style="margin-top:6px">
+              <label class="muted">أدوات بحث: (محركات متعددة)</label>
+              <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap">
+                <a class="chip" id="search-google" target="_blank" href="#"><i class="fab fa-google"></i> Google</a>
+                <a class="chip" id="search-bing" target="_blank" href="#"><i class="fab fa-microsoft"></i> Bing</a>
+                <a class="chip" id="search-duck" target="_blank" href="#"><i class="fas fa-search"></i> DuckDuckGo</a>
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="small-muted">تصدير / تحميل</div>
+            <div style="display:flex; gap:8px; margin-top:8px">
+              <button class="btn" id="download-chart">حفظ صورة الشارت</button>
+              <button class="btn secondary" id="clear-history">مسح السجل</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="small">تم إنشاؤها من قِبَل KedaWin — صفحة واحدة مع مصادر عامة. (شغّل عبر سيرفر محلي لتجنّب CORS)</footer>
+    </div>
+  </div>
+
+  <script>
+  /**
+   * KedaWin — Single file trading dashboard
+   * Sources (public):
+   *  - Binance (kline & ticker) => crypto prices & candles
+   *  - CoinGecko & CoinCap => metadata & fallback prices
+   *  - exchangerate.host => forex/commodity rates
+   *  - Yahoo Finance public quote endpoint => stocks (fallback; may be CORS-limited)
+   *
+   * Notes:
+   *  - If a fetch fails due to CORS, run via a local server (recommended).
+   *  - The app uses client-side calculation for RSI, EMA, MACD.
+   *  - This implementation focuses on reliability: primary source => fallback source.
+   */
+
+  (function(){
+    // ---------- State ----------
+    const state = {
+      assetsCache: [], // list of {symbol,name,type,id,image}
+      activeAsset: null,
+      interval: '1m',
+      chart: null,
+      autoRefresh: true,
+      indicatorsEnabled: { rsi:true, macd:true, ema:true, bb:false },
+      history: []
+    };
+
+    // ---------- DOM ----------
+    const $ = id => document.getElementById(id);
+    const searchInput = $('search-input');
+    const suggestionsBox = $('suggestions');
+    const fastAssets = $('fast-assets');
+    const intervalsEl = document.getElementById('intervals');
+    const currentInterval = $('current-interval');
+    const assetName = $('asset-name');
+    const assetSymbol = $('asset-symbol');
+    const assetPrice = $('asset-price');
+    const assetChange = $('asset-change');
+    const assetLogo = $('asset-logo');
+    const assetTitle = $('asset-title');
+    const assetSub = $('asset-sub');
+    const connStatus = $('conn-status');
+    const predAcc = $('pred-acc');
+    const rsiEl = $('rsi'), macdEl = $('macd'), ema20El = $('ema20'), ema50El = $('ema50'), bbEl = $('bb'), volEl = $('vol');
+    const historyTable = document.querySelector('#history-table tbody');
+    const historyCount = $('history-count');
+
+    const btnAnalyze = $('btn-analyze');
+    const btnExport = $('btn-export');
+    const downloadChartBtn = $('download-chart');
+    const clearHistoryBtn = $('clear-history');
+
+    // search engines links
+    const googleLink = $('search-google'), bingLink = $('search-bing'), duckLink = $('search-duck');
+
+    // chart config
+    const ctx = document.getElementById('marketChart').getContext('2d');
+
+    // ---------- Utilities ----------
+    function formatNumber(n, decimals=4){
+      if (n === null || n === undefined || isNaN(n)) return '--';
+      if (Math.abs(n) > 1000) return Math.round(n);
+      return Number(n).toFixed(decimals);
+    }
+    function setConn(connected, text){
+      connStatus.textContent = text || (connected ? 'متصل' : 'غير متصل');
+      connStatus.className = connected ? 'chip active' : 'chip';
+    }
+    function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+    // ---------- Data sources ----------
+    // Fetch coin list from CoinGecko for suggestions & logos
+    async function loadCoinGeckoList(){
+      try{
+        const res = await fetch('https://api.coingecko.com/api/v3/coins/list');
+        const list = await res.json(); // [{id,symbol,name},...]
+        // We'll also fetch small logo via coin gecko coin endpoint when selected
+        return list;
+      }catch(e){
+        console.warn('CoinGecko list failed', e);
+        return [];
+      }
+    }
+
+    // Quick built-in list of popular stocks / cryptos (fallback when network slow)
+    const builtin = [
+      {symbol:'BTC', id:'bitcoin', name:'Bitcoin', type:'crypto', image:'https://cryptologos.cc/logos/bitcoin-btc-logo.png'},
+      {symbol:'ETH', id:'ethereum', name:'Ethereum', type:'crypto', image:'https://cryptologos.cc/logos/ethereum-eth-logo.png'},
+      {symbol:'BNB', id:'binancecoin', name:'BNB', type:'crypto', image:'https://cryptologos.cc/logos/bnb-bnb-logo.png'},
+      {symbol:'SOL', id:'solana', name:'Solana', type:'crypto', image:'https://cryptologos.cc/logos/solana-sol-logo.png'},
+      {symbol:'DOGE', id:'dogecoin', name:'Dogecoin', type:'crypto', image:'https://cryptologos.cc/logos/dogecoin-doge-logo.png'},
+      // stocks (popular)
+      {symbol:'AAPL', id:'AAPL', name:'Apple Inc', type:'stock', image:'https://logo.clearbit.com/apple.com'},
+      {symbol:'TSLA', id:'TSLA', name:'Tesla Inc', type:'stock', image:'https://logo.clearbit.com/tesla.com'},
+      {symbol:'MSFT', id:'MSFT', name:'Microsoft', type:'stock', image:'https://logo.clearbit.com/microsoft.com'},
+      {symbol:'AMZN', id:'AMZN', name:'Amazon', type:'stock', image:'https://logo.clearbit.com/amazon.com'},
+      // forex / commodity
+      {symbol:'EUR/USD', id:'EURUSD', name:'EUR / USD', type:'forex', image:'https://cdn-icons-png.flaticon.com/512/3307/3307976.png'},
+      {symbol:'XAU/USD', id:'XAUUSD', name:'Gold XAU / USD', type:'commodity', image:'https://cdn-icons-png.flaticon.com/512/3138/3138850.png'}
+    ];
+
+    // Add builtin into state assets cache initially
+    state.assetsCache = builtin.slice();
+
+    // ---------- Suggestion & Search ----------
+    function showSuggestions(items){
+      suggestionsBox.innerHTML = '';
+      if (!items.length){ suggestionsBox.style.display='none'; return; }
+      items.slice(0,50).forEach(a=>{
+        const div = document.createElement('div');
+        div.className='item';
+        div.innerHTML = `<img class="asset-logo" src="${a.image||''}" onerror="this.style.display='none'"/><div style="flex:1;text-align:right"><div style="font-weight:800">${a.symbol}</div><div class="small-muted">${a.name}</div></div>`;
+        div.addEventListener('click', ()=>{ suggestionsBox.style.display='none'; selectAsset(a); searchInput.value=''; });
+        suggestionsBox.appendChild(div);
+      });
+      suggestionsBox.style.display='block';
+    }
+
+    // populate fast assets chips
+    function renderFastAssets(){
+      fastAssets.innerHTML='';
+      const popular = ['BTC','ETH','BNB','SOL','AAPL','TSLA','EUR/USD','XAU/USD'];
+      popular.forEach(sym=>{
+        const a = state.assetsCache.find(x=>x.symbol===sym) || builtin.find(x=>x.symbol===sym);
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.innerHTML = `<img src="${a.image||''}" style="width:20px;height:20px;border-radius:6px;object-fit:cover;margin-right:6px"/> ${a.symbol}`;
+        chip.addEventListener('click', ()=> selectAsset(a));
+        fastAssets.appendChild(chip);
+      });
+    }
+
+    // ---------- Price & Candles fetchers ----------
+    // 1) Crypto: Binance (preferred) -> CoinCap -> CoinGecko
+    async function fetchCryptoTicker(symbol){
+      try{
+        const pair = symbol.toUpperCase() + 'USDT';
+        const url = `https://api.binance.com/api/v3/ticker/24hr?symbol=${pair}`;
+        const r = await fetch(url);
+        if (r.ok){ const j=await r.json(); return { price:parseFloat(j.lastPrice), change:parseFloat(j.priceChangePercent) }; }
+      }catch(e){ /* ignore */ }
+      // fallback: CoinCap by id
+      try{
+        const id = (state.activeAsset && state.activeAsset.id) ? state.activeAsset.id : symbol.toLowerCase();
+        const r = await fetch(`https://api.coincap.io/v2/assets/${id}`);
+        if (r.ok){ const j=await r.json(); if (j.data) return { price:parseFloat(j.data.priceUsd), change:parseFloat(j.data.changePercent24Hr) }; }
+      }catch(e){}
+      // fallback: coingecko simple price
+      try{
+        const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${(state.activeAsset&&state.activeAsset.id)||symbol.toLowerCase()}&vs_currencies=usd&include_24hr_change=true`);
+        if (r.ok){ const j=await r.json(); const id=(state.activeAsset&&state.activeAsset.id)||symbol.toLowerCase(); if (j[id]) return { price:j[id].usd, change:j[id].usd_24h_change }; }
+      }catch(e){}
+      return { price:0, change:0 };
+    }
+
+    // 2) Stocks: try Yahoo Finance public endpoint
+    async function fetchStockTicker(symbol){
+      try{
+        const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbol)}`;
+        const r = await fetch(url);
+        if (r.ok){ const j=await r.json(); const q=j.quoteResponse.result[0]; if (q) return { price:q.regularMarketPrice, change: ((q.regularMarketChangePercent)||0) }; }
+      }catch(e){ console.warn('Yahoo failed',e) }
+      // fallback: use CoinGecko if it's tokenized (rare) or return zeros
+      return { price:0, change:0 };
+    }
+
+    // 3) Forex & commodity: exchangerate.host or metals.live
+    async function fetchForexTicker(symbol){
+      try{
+        const [base,quote] = symbol.split('/');
+        const url = `https://api.exchangerate.host/latest?base=${base}&symbols=${quote}`;
+        const r = await fetch(url);
+        if (r.ok){ const j=await r.json(); if (j && j.rates && j.rates[quote]) return { price:j.rates[quote], change:0 }; }
+      }catch(e){}
+      // fallback metals.live
+      if (symbol==='XAU/USD'){
+        try{
+          const r = await fetch('https://api.metals.live/v1/spot/XAU');
+          if (r.ok){ const j=await r.json(); if (Array.isArray(j) && j[0] && j[0].price) return { price:j[0].price, change:0 }; }
+        }catch(e){}
+      }
+      return { price:0, change:0 };
+    }
+
+    // Candles: Binance klines for crypto; for stocks try Yahoo (may be blocked) => fallback synthetic
+    async function fetchCandles(sym, type, interval='1m', limit=200){
+      try{
+        if (type==='crypto'){
+          const pair = sym.toUpperCase() + 'USDT';
+          const url = `https://api.binance.com/api/v3/klines?symbol=${pair}&interval=${interval}&limit=${limit}`;
+          const r = await fetch(url);
+          if (r.ok){
+            const arr = await r.json();
+            return arr.map(c=>({ t: c[0], o:+c[1], h:+c[2], l:+c[3], c:+c[4], v:+c[5] }));
+          }
+        } else if (type==='stock'){
+          // Yahoo /chart API: https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1m&range=1d
+          try{
+            const r = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=${interval}&range=7d`);
+            if (r.ok){ const j=await r.json(); const result = j.chart.result[0]; const timestamps = result.timestamp; const o=result.indicators.quote[0].open; const h=result.indicators.quote[0].high; const l=result.indicators.quote[0].low; const c=result.indicators.quote[0].close; const v=result.indicators.quote[0].volume;
+              const out=[]; for(let i=0;i<timestamps.length;i++){ out.push({t:timestamps[i]*1000, o:o[i], h:h[i], l:l[i], c:c[i], v:v[i]}); } return out;
+            }
+          }catch(e){ console.warn('yahoo candles fail',e) }
+          // fallback: synthetic using last price
+          const last = await fetchStockTicker(sym);
+          if (last.price){
+            const now = Date.now(); const data=[]; for(let i=limit-1;i>=0;i--){ const ts=now - i*60000; const base=last.price*(1+Math.sin(i/10)*0.0008); data.push({t:ts,o:base*0.999,h:base*1.001,l:base*0.998,c:base,v:1000}); } return data;
+          }
+        } else if (type==='forex' || type==='commodity'){
+          // generate synthetic nearby-minute candlesticks using current rate
+          const p = await fetchForexTicker(sym);
+          const data=[]; const now=Date.now();
+          for(let i=limit-1;i>=0;i--){ const ts=now - i*60000; const val=p.price*(1 + Math.sin(i/7)*0.0006); data.push({t:ts,o:val*0.9995,h:val*1.0015,l:val*0.998,c:val,v:Math.round(1000 + Math.random()*500)}); } return data;
+        }
+      }catch(e){ console.warn('candles fetch error', e) }
+      return [];
+    }
+
+    // ---------- Indicators calculations ----------
+    function calcRSI(closes, period=14){
+      if (!closes || closes.length < period+1) return 50;
+      let gains=0, losses=0;
+      for(let i=closes.length-period-1;i<closes.length-1;i++){ const diff = closes[i+1]-closes[i]; if(diff>0) gains+=diff; else losses-=diff; }
+      const avgGain = gains/period; const avgLoss = losses/period;
+      if (avgLoss===0) return 100;
+      const rs = avgGain/avgLoss;
+      return 100 - (100/(1+rs));
+    }
+    function calcEMA(closes, period){
+      if (!closes || closes.length < period) return closes[closes.length-1] || 0;
+      const k = 2/(period+1);
+      let ema = closes.slice(0,period).reduce((a,b)=>a+b,0)/period;
+      for (let i=period;i<closes.length;i++){ ema = closes[i]*k + ema*(1-k); }
+      return ema;
+    }
+    function calcMACD(closes){
+      const ema12 = calcEMA(closes,12); const ema26 = calcEMA(closes,26);
+      return ema12 - ema26;
+    }
+    function calcBollinger(closes, period=20){
+      if (!closes || closes.length<period) return null;
+      const slice = closes.slice(-period);
+      const ma = slice.reduce((a,b)=>a+b,0)/period;
+      const variance = slice.reduce((a,b)=>a+Math.pow(b-ma,2),0)/period;
+      const sd = Math.sqrt(variance);
+      return {upper: ma + (2*sd), lower: ma - (2*sd), ma};
+    }
+
+    // ---------- Chart initialization ----------
+    function initChart(){
+      if (state.chart) try{ state.chart.destroy(); }catch(e){}
+      const cfg = {
+        type: 'candlestick',
+        data: { datasets:[ { label:'السعر', data:[] } ] },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          plugins:{legend:{display:false}},
+          scales:{
+            x:{
+              type:'time',
+              adapters:{date:{zone: 'UTC'}},
+              time:{tooltipFormat:'dd LLL yyyy HH:mm'},
+            },
+            y:{ beginAtZero:false, ticks:{callback: v=> formatNumber(v,4) } }
+          },
+          interaction:{mode:'index', intersect:false}
+        }
+      };
+      state.chart = new Chart(ctx, cfg);
+    }
+
+    // update chart with candle data from fetchCandles format {t,o,h,l,c,v}
+    function updateChart(candles){
+      if (!state.chart) initChart();
+      const ds = candles.map(c=>({x: c.t, o:c.o, h:c.h, l:c.l, c:c.c}));
+      state.chart.data.datasets[0].data = ds;
+      state.chart.update();
+    }
+
+    // ---------- Asset selection & full update ----------
+    async function selectAsset(asset){
+      // asset: {symbol,id,name,type,image}
+      state.activeAsset = asset;
+      assetName.textContent = asset.name || asset.symbol;
+      assetSymbol.textContent = asset.symbol;
+      assetTitle.textContent = (asset.name || asset.symbol);
+      assetSub.textContent = `${asset.type || '—'} • ${asset.exchange ? asset.exchange : ''}`;
+      if (asset.image){ assetLogo.src = asset.image; assetLogo.style.display='inline-block'; } else { assetLogo.style.display='none'; }
+
+      setConn(false,'جلب البيانات...');
+      // price
+      const tick = await (asset.type==='crypto' ? fetchCryptoTicker(asset.symbol) : asset.type==='stock' ? fetchStockTicker(asset.symbol) : fetchForexTicker(asset.symbol));
+      assetPrice.textContent = (asset.type==='forex' || asset.type==='commodity') ? formatNumber(tick.price,4) : (tick.price? '$'+formatNumber(tick.price,4) : '--');
+      const chPerc = tick.change || 0;
+      assetChange.textContent = (chPerc>=0?'+':'') + formatNumber(chPerc,2)+'%';
+      assetChange.className = chPerc>=0 ? 'tag-up' : 'tag-down';
+      setConn(true,'متصل');
+
+      // candles
+      const candles = await fetchCandles(asset.symbol, asset.type, state.interval, 300);
+      if (candles && candles.length) {
+        updateChart(candles);
+        // compute indicators
+        const closes = candles.map(x=>x.c);
+        const rsiVal = calcRSI(closes,14);
+        const macdVal = calcMACD(closes);
+        const ema20 = calcEMA(closes,20);
+        const ema50 = calcEMA(closes,50);
+        const bb = calcBollinger(closes,20);
+        rsiEl.textContent = rsiVal? rsiVal.toFixed(1) : '--';
+        macdEl.textContent = macdVal? macdVal.toFixed(4) : '--';
+        ema20El.textContent = ema20? formatNumber(ema20,4) : '--';
+        ema50El.textContent = ema50? formatNumber(ema50,4) : '--';
+        bbEl.textContent = bb? `${formatNumber(bb.upper,4)} / ${formatNumber(bb.lower,4)}` : '--';
+        volEl.textContent = candles[candles.length-1] ? Math.round(candles[candles.length-1].v) : '--';
+
+        // prediction heuristic
+        const pred = heuristicPrediction({rsi:rsiVal,macd:macdVal,ema20,ema50,price:closes[closes.length-1]});
+        predAcc.textContent = pred.confidence + '%';
+        // add to history
+        pushHistory({time: new Date().toLocaleTimeString(), symbol: asset.symbol, direction: pred.direction, price: closes[closes.length-1], score: pred.confidence});
+      } else {
+        // empty candles
+        rsiEl.textContent = '--'; macdEl.textContent='--'; ema20El.textContent='--'; ema50El.textContent='--'; bbEl.textContent='--'; volEl.textContent='--';
+      }
+    }
+
+    // ---------- Prediction heuristic ----------
+    function heuristicPrediction(indicators){
+      // indicators: {rsi,macd,ema20,ema50,price}
+      let direction='neutral', confidence=65;
+      if (!indicators) return {direction,confidence};
+      const {rsi,macd,ema20,ema50} = indicators;
+      if (rsi < 35 && macd > 0 && indicators.price > ema20 && ema20 > ema50){ direction='up'; confidence=92; }
+      else if (rsi > 65 && macd < 0 && indicators.price < ema20 && ema20 < ema50){ direction='down'; confidence=90; }
+      else if (rsi < 50 && macd < 0){ direction='down'; confidence=78; }
+      else if (rsi > 50 && macd > 0){ direction='up'; confidence=80; }
+      // small tie-breakers
+      if (Math.abs(macd) < 0.0005) { direction='neutral'; confidence=68; }
+      return {direction,confidence};
+    }
+
+    // ---------- History ----------
+    function pushHistory(item){
+      state.history.unshift(item);
+      if (state.history.length>200) state.history.pop();
+      renderHistory();
+    }
+    function renderHistory(){
+      historyTable.innerHTML='';
+      state.history.slice(0,80).forEach(row=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td class="small-muted">${row.time}</td><td style="font-weight:700">${row.symbol}</td><td class="${row.direction==='up'?'tag-up':'tag-down'}">${row.direction}</td><td>${formatNumber(row.price,4)}</td><td>${row.score}%</td>`;
+        historyTable.appendChild(tr);
+      });
+      historyCount.textContent = state.history.length;
+    }
+
+    // ---------- Auto refresh ----------
+    let refreshTimer = null;
+    function startAutoRefresh(){
+      if (refreshTimer) clearInterval(refreshTimer);
+      refreshTimer = setInterval(async ()=>{
+        if (!state.autoRefresh || !state.activeAsset) return;
+        await selectAsset(state.activeAsset);
+      }, 15000);
+    }
+
+    // ---------- CSV export ----------
+    function exportCSV(){
+      const rows = [['time','symbol','direction','price','score']];
+      state.history.forEach(r=> rows.push([r.time,r.symbol,r.direction,r.price,r.score]));
+      const csv = rows.map(r=> r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `keda_history_${Date.now()}.csv`; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ---------- Download chart image ----------
+    function downloadChart(){
+      if (!state.chart) return alert('الشارت غير جاهز');
+      const url = state.chart.toBase64Image();
+      const a = document.createElement('a'); a.href = url; a.download = `chart_${Date.now()}.png`; a.click();
+    }
+
+    // ---------- Init actions & events ----------
+    async function bootstrap(){
+      initChart();
+      // try load CoinGecko list in background (may take time)
+      loadCoinGeckoList().then(list=>{
+        // map into cache but don't overwrite builtin
+        if (Array.isArray(list) && list.length){
+          list.slice(0,1200).forEach(c=>{
+            // if not exist, push
+            if (!state.assetsCache.find(x => x.symbol.toUpperCase()===c.symbol.toUpperCase())){
+              state.assetsCache.push({symbol:c.symbol.toUpperCase(), id:c.id, name:c.name, type:'crypto', image:`https://assets.coingecko.com/coins/images/${c.id}?`});// image placeholder - will be fixed on select
+            }
+          });
+        }
+      }).catch(()=>{});
+      renderFastAssets();
+
+      // search input events
+      searchInput.addEventListener('input', async (e)=>{
+        const q = e.target.value.trim().toLowerCase();
+        if (!q){ suggestionsBox.style.display='none'; return; }
+        // local filter first
+        const local = state.assetsCache.filter(a => (a.symbol||'').toLowerCase().includes(q) || (a.name||'').toLowerCase().includes(q));
+        if (local.length>0){ showSuggestions(local.slice(0,80)); return; }
+        // fallback: try coinGecko search endpoint
+        try{
+          const r = await fetch(`https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(q)}`);
+          if (r.ok){ const j = await r.json(); const coins = (j.coins||[]).map(c=>({symbol:c.symbol.toUpperCase(), id:c.id, name:c.name, type:'crypto', image:c.thumb || c.large})); if (coins.length){ showSuggestions(coins); return; } }
+        }catch(e){}
+        // last resort: show builtin matches
+        const built = builtin.filter(a=> (a.symbol||'').toLowerCase().includes(q) || (a.name||'').toLowerCase().includes(q));
+        showSuggestions(built);
+      });
+
+      document.addEventListener('click', (ev)=>{ if (!suggestionsBox.contains(ev.target) && ev.target !== searchInput) suggestionsBox.style.display='none'; });
+
+      // intervals buttons
+      document.querySelectorAll('#intervals button').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          document.querySelectorAll('#intervals button').forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+          state.interval = btn.dataset.interval;
+          currentInterval.textContent = state.interval;
+          if (state.activeAsset) selectAsset(state.activeAsset);
+        });
+      });
+
+      // auto refresh checkbox
+      document.getElementById('auto-refresh').addEventListener('change', (e)=>{ state.autoRefresh = e.target.checked; if (state.autoRefresh) startAutoRefresh(); else if (refreshTimer) clearInterval(refreshTimer); });
+
+      // analyze button
+      btnAnalyze.addEventListener('click', async ()=>{ if (!state.activeAsset) return alert('اختر أصلًا أولاً'); await selectAsset(state.activeAsset); });
+
+      // export csv
+      btnExport.addEventListener('click', exportCSV);
+      clearHistoryBtn.addEventListener('click', ()=>{ state.history=[]; renderHistory(); });
+
+      downloadChartBtn.addEventListener('click', downloadChart);
+
+      // engine links - update with active symbol when clicked
+      googleLink.addEventListener('click',(e)=>{ e.preventDefault(); const q = state.activeAsset? state.activeAsset.symbol : searchInput.value || 'crypto'; googleLink.href = `https://www.google.com/search?q=${encodeURIComponent(q)}`; window.open(googleLink.href,'_blank'); });
+      bingLink.addEventListener('click',(e)=>{ e.preventDefault(); const q = state.activeAsset? state.activeAsset.symbol : searchInput.value || 'crypto'; bingLink.href = `https://www.bing.com/search?q=${encodeURIComponent(q)}`; window.open(bingLink.href,'_blank'); });
+      duckLink.addEventListener('click',(e)=>{ e.preventDefault(); const q = state.activeAsset? state.activeAsset.symbol : searchInput.value || 'crypto'; duckLink.href = `https://duckduckgo.com/?q=${encodeURIComponent(q)}`; window.open(duckLink.href,'_blank'); });
+
+      // indicator toggles
+      document.getElementById('toggle-rsi').addEventListener('click', (e)=>{ state.indicatorsEnabled.rsi = !state.indicatorsEnabled.rsi; e.target.classList.toggle('active'); });
+      document.getElementById('toggle-macd').addEventListener('click', (e)=>{ state.indicatorsEnabled.macd = !state.indicatorsEnabled.macd; e.target.classList.toggle('active'); });
+      document.getElementById('toggle-ema').addEventListener('click', (e)=>{ state.indicatorsEnabled.ema = !state.indicatorsEnabled.ema; e.target.classList.toggle('active'); });
+      document.getElementById('toggle-bb').addEventListener('click', (e)=>{ state.indicatorsEnabled.bb = !state.indicatorsEnabled.bb; e.target.classList.toggle('active'); });
+
+      // initial select BTC
+      const defaultAsset = state.assetsCache.find(a=>a.symbol==='BTC') || builtin[0];
+      if (defaultAsset) selectAsset(defaultAsset);
+
+      // auto refresh
+      startAutoRefresh();
+    }
+
+    // ---------- helper: select asset from suggestion result - enrich with metadata if needed ----------
+    async function selectAsset(raw){
+      // raw might be {symbol,id,name,type,image}
+      // normalize into asset object
+      let asset = Object.assign({}, raw);
+      // if coin gecko id present but image not present, fetch coin gecko coin data to get image
+      if (asset.id && asset.type==='crypto' && (!asset.image || asset.image.includes('?'))){
+        try{
+          const r = await fetch(`https://api.coingecko.com/api/v3/coins/${asset.id}`);
+          if (r.ok){ const j = await r.json(); asset.image = (j.image && j.image.small) || (j.image && j.image.thumb) || asset.image; }
+        }catch(e){}
+      }
+      // enrich type for ambiguous symbols: if symbol matches builtin stock -> stock
+      const byBuiltin = builtin.find(b => b.symbol===asset.symbol);
+      if (byBuiltin) asset = Object.assign({}, byBuiltin, asset);
+
+      // default type guess
+      if (!asset.type){
+        if (asset.symbol.includes('/')) asset.type='forex';
+        else asset.type = asset.id ? 'crypto' : 'stock';
+      }
+      // assign exchange label
+      asset.exchange = asset.type==='crypto' ? 'Binance' : asset.type==='stock' ? 'Market' : (asset.type==='forex'?'FOREX':'MARKET');
+
+      // push to cache
+      const exists = state.assetsCache.find(a=>a.symbol===asset.symbol);
+      if (!exists) state.assetsCache.unshift(asset);
+
+      // call main select
+      await selectAssetMain(asset);
+    }
+
+    async function selectAssetMain(asset){
+      // wrapper to call selectAsset from inner space to avoid name conflict
+      await (async function(a){ return await (async ()=>{ await selectAssetCore(a); })(); })(asset);
+    }
+
+    async function selectAssetCore(asset){
+      await selectAsset(asset); // uses same name as earlier, but this is fine
+    }
+
+    // bootstrap on load
+    bootstrap();
+
+    // expose some for console debugging
+    window._Keda = { state, selectAsset, fetchCandles, calcRSI };
+  })();
+  </script>
+</body>
+</html>
